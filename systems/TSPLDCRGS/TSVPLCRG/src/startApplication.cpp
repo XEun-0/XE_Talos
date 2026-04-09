@@ -4,11 +4,12 @@
 
 // Declare globals as extern in this file
 // while declaring actually for other files
-// that require gTTCInterface
+// global header without macro is called in
+// controller.h
 #define DECLARE_GLOBALS
-#include "globals.h"     // gTTCInterface
+#include "globals.h"            // gVActInterface
 
-#include "taskGlobals.h"
+#include "taskGlobals.h"        // SYS_BAUD_RATE
 #include "controller.h"         // controllerTaskLauncher
 
 /*********************************************************
@@ -20,7 +21,6 @@
 void setup() {
     Serial.begin(SYS_BAUD_RATE);
 
-    Serial.print("helloworld");
     // Create main controller task
     xTaskCreate(
         controllerTaskLauncher,             // Function to be called
@@ -31,6 +31,8 @@ void setup() {
         NULL                                // Task handle for reference
     );
 
+    gVActInterface.VActInterfaceTaskLauncher();
+    gIMUInterface.ImuTaskLauncher();
     // No need to start scheduler
 }
 

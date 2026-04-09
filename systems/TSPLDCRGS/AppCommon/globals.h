@@ -1,19 +1,22 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-
-// #include "TTCInterface.h"
+#include "vertActInterface.h"
+#include "imuInterface.h"
 
 // Forward Declaration
-// class TTCInterface;
+class VertActInterface;
+class IMUInterface;
 
 #ifdef DECLARE_GLOBALS
 
-// extern TTCInterface gTTCInterface;
+extern VertActInterface gVActInterface;
+extern IMUInterface gIMUInterface;
 
 #else
 
-// TTCInterface gTTCInterface;
+VertActInterface gVActInterface;
+IMUInterface gIMUInterface;
 
 #endif
 
