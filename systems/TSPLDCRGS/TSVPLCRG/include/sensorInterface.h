@@ -2,16 +2,18 @@
 #define IMUINTERFACE_H
 
 #include <Adafruit_BNO055.h>            // Adafruit_BNO055
+#include <Wire.h>
 
-#include "taskGlobals.h"                // I_VERT_ACT_DELAY_8HZ
+#include "taskGlobals.h"                // TASK_DELAY_8HZ
+
 
 // Telemetry and Thruster Control Interface
-class IMUInterface {
+class SensorInterface {
 
 public:
 
-    IMUInterface(void);
-    ~IMUInterface(void);
+    SensorInterface(void);
+    ~SensorInterface(void);
 
     /*********************************************************
      * 
@@ -19,14 +21,19 @@ public:
      * Notes: n/a
      * 
      *********************************************************/
-    void ImuTaskLauncher(void);
+    void SensorTaskLauncher(void);
 
 private:
     SemaphoreHandle_t   sohMutex;
     SemaphoreHandle_t   thruserBinarySemaphore;
 
     Adafruit_BNO055     bno;
-    QueueHandle_t       gImuQueue;
+    QueueHandle_t       gSensorQueue;
+    
+    TwoWire I2C_1 = TwoWire(0);
+    TwoWire I2C_2 = TwoWire(1);
+
+    static constexpr uint8_t AS5600_ADDR = 0x36;
 
     /*********************************************************
      * 
@@ -44,6 +51,15 @@ private:
      *********************************************************/
     void processInfo();
 
+    /*********************************************************
+     * 
+     * Name:  readRawAngle
+     * Notes: -
+     * 
+     *********************************************************/
+    uint16_t readRawAngle_1();
+    uint16_t readRawAngle_2();
+    
     /*********************************************************
      * 
      * Name:  processInfoStatic

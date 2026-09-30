@@ -32,7 +32,7 @@ void setup() {
     );
 
     gVActInterface.VActInterfaceTaskLauncher();
-    gIMUInterface.ImuTaskLauncher();
+    gSensorInterface.SensorTaskLauncher();
     // No need to start scheduler
 }
 

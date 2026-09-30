@@ -1,8 +1,8 @@
-#include "controller.h"
-#include "taskGlobals.h"
-
 #include <cstddef>
 #include <Arduino.h>
+
+#include "controller.h"
+#include "taskGlobals.h"            // gSensorQueue
 // #include <Adafruit_BNO055.h>
 
 //====== Initialize Variables ============================
@@ -69,6 +69,16 @@ void Controller::mainLoop(void) {
         
         TickType_t startTick = xTaskGetTickCount();
         TickType_t currTick = xTaskGetTickCount();
+
+        // if (gVActInterface != NULL) 
+        // { 
+        //     printf("gVActInterface exists\n");
+        // }
+
+        // if (gSensorInterface != NULL)
+        // {
+        //     printf("gVActInterface exists\n");
+        // }
 
         vTaskDelay(MAIN_CONTROLLER_TASK_DELAY_10HZ);
     }

@@ -2,21 +2,21 @@
 #define GLOBALS_H
 
 #include "vertActInterface.h"
-#include "imuInterface.h"
+#include "sensorInterface.h"
 
 // Forward Declaration
 class VertActInterface;
-class IMUInterface;
+class SensorInterface;
 
 #ifdef DECLARE_GLOBALS
 
 extern VertActInterface gVActInterface;
-extern IMUInterface gIMUInterface;
+extern SensorInterface gSensorInterface;
 
 #else
 
 VertActInterface gVActInterface;
-IMUInterface gIMUInterface;
+SensorInterface gSensorInterface;
 
 #endif
 

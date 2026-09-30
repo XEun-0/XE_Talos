@@ -9,8 +9,8 @@
 #define DIR 6
 #define ENA_2 7
 
-#define SDA_PIN 8
-#define SCL_PIN 9
+#define SDA_PIN_1 8
+#define SCL_PIN_1 9
 #define AS5600_ADDR 0x36
 
 const long pulsePerRev = 6400;
@@ -25,7 +25,7 @@ void setup() {
     digitalWrite(ENA_2, HIGH);
 
     Serial.begin(115200);
-    Wire.begin(SDA_PIN, SCL_PIN);
+    Wire.begin(SDA_PIN_1, SCL_PIN_1);
 
     Serial.println("AS5600 Encoder Test");
 
@@ -58,29 +58,121 @@ uint16_t readRawAngle() {
     return 0;
 }
 
+// unsigned long lastStepTime = 0;
+// const int stepInterval = 400; // microseconds (controls speed)
+
+unsigned long lastStepTime = 0;
+const int stepInterval = 400;   // time between steps (µs)
+const int pulseWidth = 3;       // HIGH time (µs)
+
+bool pulseState = false;
+unsigned long pulseStart = 0;
+
 void loop() {
-    // digitalWrite(DIR, HIGH); // Upwards
-    // digitalWrite(ENA_2, HIGH);
+    unsigned long now = micros();
 
-    // for (long i = 0; i < pulsePerRev; i++) {
-    //     digitalWrite(PUL, HIGH);
-    //     delayMicroseconds(pDelay);
-    //     digitalWrite(PUL, LOW);
-    //     delayMicroseconds(pDelay);
-    // }
+    // ===== Stepper pulse generator =====
+    if (!pulseState && (now - lastStepTime >= stepInterval)) {
+        // start pulse
+        digitalWrite(PUL, HIGH);
+        pulseStart = now;
+        pulseState = true;
+        lastStepTime = now;
+    }
 
+    if (pulseState && (now - pulseStart >= pulseWidth)) {
+        // end pulse
+        digitalWrite(PUL, LOW);
+        pulseState = false;
+    }
+
+    // ===== Encoder runs freely =====
     uint16_t raw = readRawAngle();
-
-    // 12-bit resolution (0–4095)
     float angle = (raw * 360.0) / 4096.0;
 
     Serial.print("Raw: ");
     Serial.print(raw);
     Serial.print(" | Angle: ");
     Serial.println(angle);
+}
 
-    delay(100);
-    // delay(2000);
+// void loop() {
+//     // ===== Stepper timing =====
+//     unsigned long now = micros();
+    
+//     if (now - lastStepTime >= stepInterval) {
+//         lastStepTime = now;
+
+//         // generate ONE pulse
+//         digitalWrite(DIR, HIGH); // Upwards
+//         digitalWrite(ENA_2, HIGH);
+//         digitalWrite(PUL, HIGH);
+//         delayMicroseconds(2); // short HIGH pulse
+//         digitalWrite(PUL, LOW);
+//     }
+
+//     // ===== Encoder runs continuously =====
+//     uint16_t raw = readRawAngle();
+
+//     // 12-bit resolution (0–4095)
+//     float angle = (raw * 360.0) / 4096.0;
+
+//     Serial.print("Raw: ");
+//     Serial.print(raw);
+//     Serial.print(" | Angle: ");
+//     Serial.println(angle);
+
+//     delay(100); // 10Hz
+// }
+
+// void loop() {
+//     digitalWrite(DIR, LOW); // Downwards
+//     digitalWrite(ENA_2, HIGH);
+
+//     for (long i = 0; i < pulsePerRev; i++) {
+//         digitalWrite(PUL, HIGH);
+//         delayMicroseconds(pDelay);
+//         digitalWrite(PUL, LOW);
+//         delayMicroseconds(pDelay);
+//     }
+
+//     digitalWrite(ENA_2, LOW);
+//     delay(2000);
+// }
+
+    
+
+    // static int motor_count = 0;
+    // static int wait_count = 0;
+    // if (wait_count == 0) {
+    //     if (motor_count >= 10) {
+    //         digitalWrite(ENA_2, HIGH);
+    //         digitalWrite(DIR, HIGH); // Upwards
+    //         digitalWrite(PUL, HIGH);
+
+    //         motor_count += 1;
+    //     } else {
+    //         digitalWrite(PUL, LOW);
+    //         digitalWrite(ENA_2, LOW);
+
+    //         motor_count = 0;
+    //         wait_count = 1;
+    //     }
+    // } else {
+    //     wait_count += 1;
+    // }
+
+    // if (wait_count == 50) {
+    //     wait_count = 0;
+    // }
+    
+    // // for (long i = 0; i < pulsesFor5mm; i++) {
+    // delay(100);
+    //     digitalWrite(PUL, HIGH);
+    //     delayMicroseconds(pDelay);
+    //     digitalWrite(PUL, LOW);
+    //     delayMicroseconds(pDelay);
+    // }
 
     // digitalWrite(ENA_2, LOW);
 
@@ -112,7 +204,7 @@ void loop() {
 
     // digitalWrite(ENA_2, LOW);
     // delay(2000);
-}
+// }
 
 // #define DECLARE_GLOBALS
 // #include "globals.h"

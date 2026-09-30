@@ -3,7 +3,7 @@
 
 #include <Adafruit_BNO055.h>            // Adafruit_BNO055
 
-#include "taskGlobals.h"                // I_VERT_ACT_DELAY_8HZ
+#include "taskGlobals.h"                // TASK_DELAY_8HZ
 
 // Telemetry and Thruster Control Interface
 class VertActInterface {
@@ -22,8 +22,8 @@ public:
     void VActInterfaceTaskLauncher(void);
 
 private:
-    SemaphoreHandle_t   sohMutex;
-    SemaphoreHandle_t   thruserBinarySemaphore;
+    // SemaphoreHandle_t   sohMutex;
+    // SemaphoreHandle_t   thruserBinarySemaphore;
 
     Adafruit_BNO055     bno;
 
@@ -41,7 +41,18 @@ private:
      * Notes: process information, main loop
      * 
      *********************************************************/
-    void processInfo();
+    void processVertActInfo();
+
+    /*********************************************************
+     * 
+     * Name:  onStepTimer
+     * Notes: See controller.h
+     * 
+     *********************************************************/
+    bool isMoving();
+    void stopMotor();
+    void moveSteps(uint32_t steps, bool dir);
+    void setupTimer(uint32_t intervalUs);
 
     /*********************************************************
      * 
@@ -51,5 +62,8 @@ private:
      *********************************************************/
     static void processInfoStatic(void *pvParams);    
 };
+
+// Not in class
+void IRAM_ATTR onStepTimer();
 
 #endif // VERTACTINTERFACE_H
